@@ -41,7 +41,7 @@ Route::get('/parse/codes', function () {
             $html = $curl->response;
             $dom = new HtmlDom($html);
             $url_find = $dom->find('div[class=title] a[!class]');
-            if (isset($url_find)) {
+            if ($url_find != null) {
                 foreach ($url_find as $url) {
                     $url = $url->getAttribute('href');
                     $officeCode = new OfficeCodes;
@@ -70,24 +70,54 @@ Route::get('/parse/offices', function () {
         $url = $code->url;
         $curl->get($url);
         if ($curl->error) {
+            print $curl->error_message;
             $curl->close();
         } else {
-            $json = array();
+            $result = array();
             $html = $curl->response;
             $dom = new HtmlDom($html);
-            $tables = $dom->find('table[class=table-zebra]');
-            foreach ($tables as $table) {
-                $cleared_table = clear_table_from_tags($table);
-                $json[] = json_encode($cleared_table);
-            }
+
             $officeObject = new OfficeObjects;
-            if ($officeObject->where('officeCode', $officeCode)->first() == null) {
-                $officeObject->officeCode = $officeCode;
-                $officeObject->contact = $json[0];
-                $officeObject->location = $json[1];
-                $officeObject->options = $json[2];
-                $officeObject->conditions = $json[3];
-                $officeObject->save();
+            if ($officeObject->where('code', $officeCode)->first() == null) {
+                $price_find = $dom->find('span[class=b14 price-byr]');
+                $price = preg_replace("/(&nbsp;)/", '', $price_find[0]->plaintext);
+                if (strripos($price, 'кв.м') === false) {
+                    $formatted_price = preg_replace("/[^0-9]/", '', $price);
+                    if ($formatted_price != null) {
+                        $officeObject->price = $formatted_price;
+                        $officeObject->code = $officeCode;
+
+                        $table_dom = new HtmlDom();
+                        $tables = $dom->find('table[class=table-zebra]');
+                        for ($i = 0; $i < 4; $i++) {
+                            $html = $table_dom->load($tables[$i]);
+                            $lefts = $html->find('td[class=table-row-left]');
+                            $left_array = array();
+                            foreach ($lefts as $left) {
+                                $left = preg_replace("/(&nbsp;)/", '', $left->plaintext);
+                                $left = preg_replace("/(&mdash;)/", '-', $left);
+
+                                $left_array[] = $left;
+                            }
+                            $rights = $html->find('td[class=table-row-right]');
+                            $right_array = array();
+                            foreach ($rights as $right) {
+                                $right = preg_replace("/(&nbsp;)/", '', $right->plaintext);
+                                $right = preg_replace("/(&mdash;)/", '-', $right);
+
+                                $right_array[] = $right;
+                            }
+                            $result[] = json_encode(array_combine($left_array, $right_array));
+                        }
+
+                        $officeObject->contact = $result[0];
+                        $officeObject->location = $result[1];
+                        $officeObject->options = $result[2];
+                        $officeObject->conditions = $result[3];
+
+                        $officeObject->save();
+                    }
+                }
             }
         }
     };
@@ -96,9 +126,9 @@ Route::get('/parse/offices', function () {
 
 Route::get('office/{code}', function ($code) {
     $officeObject = new OfficeObjects;
-    $office = $officeObject->where('officeCode', $code)->first();
+    $office = $officeObject->where('code', $code)->first();
     if ($office != null) {
-        show_decoded_json_office($office);
+        show_office($office);
     }
 });
 
@@ -119,17 +149,6 @@ function clear_table_from_tags($table)
 }
 
 /**
- * @param $office
- */
-function show_decoded_json_office($office)
-{
-    print json_decode($office->contact);
-    print json_decode($office->location);
-    print json_decode($office->options);
-    print json_decode($office->conditions);
-}
-
-/**
  * @return Curl
  * @throws ErrorException
  */
@@ -142,13 +161,12 @@ function setup_curl()
     $curl = new Curl;
     $curl->setUserAgent('Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/68.0.3440.106 Safari/537.36');
     $curl->setReferrer($referer);
-    $curl->setHeader('X-Requested-With', 'XMLHttpRequest');
     $curl->setOpt(CURLOPT_SSL_VERIFYPEER, false);
     $curl->setOpt(CURLOPT_SSL_VERIFYHOST, false);
     $curl->setOpt(CURLOPT_RETURNTRANSFER, true);
-    $curl->setOpt(CURLOPT_CONNECTTIMEOUT, 0);
+    $curl->setOpt(CURLOPT_CONNECTTIMEOUT, false);
     $curl->setOpt(CURLOPT_HEADER, false);
-    $curl->setOpt(CURLOPT_TIMEOUT, 0);
+    $curl->setOpt(CURLOPT_TIMEOUT, false);
     $curl->setOpt(CURLOPT_HEADER, false);
 
     return $curl;

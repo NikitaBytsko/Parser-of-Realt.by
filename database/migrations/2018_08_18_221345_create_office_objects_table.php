@@ -16,7 +16,8 @@ class CreateOfficeObjectsTable extends Migration
         Schema::create('office_objects', function (Blueprint $table) {
             $table->increments('id');
             $table->timestamps();
-            $table->integer('officeCode');
+            $table->integer('code');
+            $table->integer('price');
             $table->json('contact');
             $table->json('location');
             $table->json('options');
