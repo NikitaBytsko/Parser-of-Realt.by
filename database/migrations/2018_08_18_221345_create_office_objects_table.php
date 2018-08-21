@@ -17,7 +17,9 @@ class CreateOfficeObjectsTable extends Migration
             $table->increments('id');
             $table->timestamps();
             $table->integer('code');
-            $table->string('price');
+            $table->integer('price');
+            $table->string('address');
+            $table->string('title');
             $table->json('contact');
             $table->json('location');
             $table->json('options');
