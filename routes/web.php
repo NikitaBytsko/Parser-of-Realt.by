@@ -29,3 +29,17 @@ Route::get('/home', 'HomeController@index')->name('home');
 
 Route::get('/parse/codes', 'ParseController@codes_parse');
 Route::get('/parse/offices', 'ParseController@offices_parse');
+
+Auth::routes();
+
+Route::get('/home', 'HomeController@index')->name('home');
+
+Route::get('/test', function () {
+    $images = \App\OfficeObjects::find(1)->images;
+
+    foreach ($images as $image) {
+        print $image->image;
+    }
+});
+
+

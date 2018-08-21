@@ -9,6 +9,10 @@
 
     <h1><a href="{{ URL::to('office') }}">Все объявления</a></h1>
 
+    @foreach ($office->images as $image)
+        <img style="max-width: 300px" src="{{$image->image}}">
+    @endforeach
+
     <h2>Контактная информация:: <?php dump(json_decode($office->contact))?></h2>
     <h2>Местоположение:: <?php dump(json_decode($office->location))?></h2>
     <h2>Параметры объекта: <?php dump(json_decode($office->options))?></h2>

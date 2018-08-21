@@ -11,6 +11,9 @@ use GuzzleHttp\Client;
 class ParseController extends Controller
 {
 
+    /**
+     * @return Client
+     */
     function set_up_client()
     {
         set_time_limit(0);
@@ -39,6 +42,9 @@ class ParseController extends Controller
         return $client;
     }
 
+    /**
+     * @throws \GuzzleHttp\Exception\GuzzleException
+     */
     function codes_parse() {
         $client = $this->set_up_client();
         $count = 0;
@@ -51,7 +57,7 @@ class ParseController extends Controller
             $url_found = $dom->find('div[class=title] a[!class]');
             if ($url_found != null) {
 
-                $position_array = get_position_price($price_found);
+                $position_array = $this->get_position_price($price_found);
 
                 $position_url = 0;
                 foreach ($url_found as $url) {
@@ -70,6 +76,9 @@ class ParseController extends Controller
         } while (true);
     }
 
+    /**
+     * @throws \GuzzleHttp\Exception\GuzzleException
+     */
     function offices_parse() {
         $client = $this->set_up_client();
 
@@ -92,6 +101,10 @@ class ParseController extends Controller
         };
     }
 
+    /**
+     * @param $price_found
+     * @return array
+     */
     function get_position_price($price_found)
     {
         $prices = $price_found;
@@ -114,6 +127,10 @@ class ParseController extends Controller
         return $position_array;
     }
 
+    /**
+     * @param $dom_parameter
+     * @param $code_parameter
+     */
     function parse_office_images($dom_parameter, $code_parameter)
     {
         $dom = $dom_parameter;
@@ -130,6 +147,11 @@ class ParseController extends Controller
         }
     }
 
+    /**
+     * @param $dom_parameter
+     * @param $code_parameter
+     * @param $office_parameter
+     */
     function parse_office_tables($dom_parameter, $code_parameter, $office_parameter)
     {
         $dom = $dom_parameter;
@@ -177,6 +199,10 @@ class ParseController extends Controller
         }
     }
 
+    /**
+     * @param $location_data
+     * @return mixed|string
+     */
     function get_office_address($location_data)
     {
         $location = json_decode($location_data);
@@ -193,6 +219,11 @@ class ParseController extends Controller
     }
 
 
+    /**
+     * @param $table_dom
+     * @param $tables_found
+     * @return array
+     */
     function get_office_tables($table_dom, $tables_found)
     {
         $dom = $table_dom;
@@ -220,6 +251,10 @@ class ParseController extends Controller
         return $result;
     }
 
+    /**
+     * @param $values
+     * @return array
+     */
     function get_table_column($values)
     {
         $array = array();
@@ -234,6 +269,10 @@ class ParseController extends Controller
         return $array;
     }
 
+    /**
+     * @param $contact_data
+     * @return string
+     */
     function formatting_contact_data($contact_data)
     {
         $contact = json_decode($contact_data);
@@ -244,6 +283,10 @@ class ParseController extends Controller
         return json_encode($contact);
     }
 
+    /**
+     * @param $location_data
+     * @return string
+     */
     function formatting_location_data($location_data)
     {
         $location = json_decode($location_data);
@@ -252,6 +295,10 @@ class ParseController extends Controller
         return json_encode($location);
     }
 
+    /**
+     * @param $options_data
+     * @return string
+     */
     function formatting_options_data($options_data)
     {
         $options = json_decode($options_data);
@@ -259,6 +306,10 @@ class ParseController extends Controller
         return json_encode($options);
     }
 
+    /**
+     * @param $conditions_data
+     * @return string
+     */
     function formatting_conditions_data($conditions_data)
     {
         $conditions = json_decode($conditions_data);
