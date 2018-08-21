@@ -19,27 +19,12 @@ Route::get('/', function () {
     return view('welcome');
 });
 
-
-Auth::routes();
-
-Route::resource('office', 'OfficeController');
-Route::post('/office', 'OfficeController@address_index');
-
-Route::get('/home', 'HomeController@index')->name('home');
-
-Route::get('/parse/codes', 'ParseController@codes_parse');
-Route::get('/parse/offices', 'ParseController@offices_parse');
-
 Auth::routes();
 
 Route::get('/home', 'HomeController@index')->name('home');
 
-Route::get('/test', function () {
-    $images = \App\OfficeObjects::find(1)->images;
+Route::resource('office', 'OfficeController')->middleware('admin');
+Route::post('/office', 'OfficeController@address_index')->middleware('admin');
 
-    foreach ($images as $image) {
-        print $image->image;
-    }
-});
-
-
+Route::get('/parse/codes', 'ParseController@codes_parse')->middleware('admin');
+Route::get('/parse/offices', 'ParseController@offices_parse')->middleware('admin');
