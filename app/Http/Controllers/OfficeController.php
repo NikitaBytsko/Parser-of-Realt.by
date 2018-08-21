@@ -10,7 +10,8 @@ use Illuminate\Support\Facades\Input;
 class OfficeController extends Controller
 {
     /**
-     * Display a listing of the resource.
+     * Display a listing of the offices.
+     * If you send a get request with sort_value, this function will return you sorted objects.
      *
      * @return \Illuminate\Http\Response
      */
@@ -32,7 +33,8 @@ class OfficeController extends Controller
     }
 
     /**
-     * Display a found listing of the resource.
+     * Display a found listing of the resource by address.
+     * If you send a post request with address in the body, this function will return you liked objects.
      *
      * @param Request $request
      * @return \Illuminate\Http\Response
