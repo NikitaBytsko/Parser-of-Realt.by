@@ -9,6 +9,7 @@
         "cucxabeng/simple-html-dom": "dev-master",
         "curl/curl": "^1.5",
         "fideloper/proxy": "^4.0",
+        "guzzlehttp/guzzle": "^6.3",
         "laravel/framework": "5.6.*",
         "laravel/tinker": "^1.0",
         "symfony/dom-crawler": "^4.1"
