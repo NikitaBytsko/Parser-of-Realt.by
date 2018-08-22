@@ -26,5 +26,6 @@ Route::get('/home', 'HomeController@index')->name('home');
 Route::resource('office', 'OfficeController')->middleware('admin');
 Route::post('/office', 'OfficeController@address_index')->middleware('admin');
 
-Route::get('/parse/codes', 'ParseController@codes_parse')->middleware('admin');
-Route::get('/parse/offices', 'ParseController@offices_parse')->middleware('admin');
+Route::get('/parse/codes', 'ParseCodesController@create')->middleware('admin');
+Route::get('/parse/offices', 'ParseTablesController@create')->middleware('admin');
+

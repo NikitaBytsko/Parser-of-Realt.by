@@ -146,12 +146,13 @@ return [
         Illuminate\Translation\TranslationServiceProvider::class,
         Illuminate\Validation\ValidationServiceProvider::class,
         Illuminate\View\ViewServiceProvider::class,
-        cucxabeng\HtmlDom\HtmlDomServiceProvider::class,
 
 
         /*
          * Package Service Providers...
          */
+        cucxabeng\HtmlDom\HtmlDomServiceProvider::class,
+
 
         /*
          * Application Service Providers...
@@ -161,6 +162,7 @@ return [
         // App\Providers\BroadcastServiceProvider::class,
         App\Providers\EventServiceProvider::class,
         App\Providers\RouteServiceProvider::class,
+        App\Providers\ParseClientServiceProvider::class,
 
     ],
 
@@ -211,7 +213,7 @@ return [
         'Validator' => Illuminate\Support\Facades\Validator::class,
         'View' => Illuminate\Support\Facades\View::class,
         'HtmlDom' => cucxabeng\HtmlDom\HtmlDom::class,
-
+        'ParseClient' => \App\Facades\ParseClientService::class,
     ],
 
 ];
